@@ -34,21 +34,21 @@ def get_users():
 
 @app.put("/api/users/{user_id}")
 def change_user_name(user_id: int, new_name: str):
-    try:
-        current_user = list(filter(lambda user: user.get("id") == user_id, test_data))[0]
-        current_user["name"] = new_name
-        return {"data": current_user}
-    except IndexError: return {"status": 404, "error": "User not found"}
+    test_data_idx = {user["id"]: user for user in test_data}
+    if not user_id in test_data_idx:
+        raise HTTPException(status_code=404, detail="User not found")
+    test_data_idx[user_id]["name"] = new_name
+    return {"data": test_data_idx[user_id]}
 
 
 @app.delete("/api/users/{user_id}")
 def delete_user(user_id: int):
-    try: 
-        user_index = next(index for index, user in enumerate(test_data) if user["id"] == user_id) 
-        deleted_user = test_data[user_index]
-        deleted_user.update({"archive": True})
-        return {"data": deleted_user} 
-    except StopIteration: return {"status": 404, "error": "User not found"}
+    test_data_idx = {user["id"]: user for user in test_data}
+    if not user_id in test_data_idx:
+        raise HTTPException(status_code=404, detail="User not found")
+    deleted_user = test_data_idx[user_id]
+    deleted_user.update({"archive": True})
+    return {"data": deleted_user} 
 
 
 @app.post("/api/users/")
