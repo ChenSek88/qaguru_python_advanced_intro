@@ -1,5 +1,5 @@
 # qaguru_python_advanced_intro
-# Микросервис Python + FastAPI
+# Микросервис Python + FastAPI и API автотесты 
 
 Установка:
 - python3 -m venv venv
