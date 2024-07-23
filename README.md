@@ -18,4 +18,4 @@
 - DELETE запрос /api/users/{user_id} - удаляем конкретного пользователя, выставляя значение ключа **archive** в *true*
 
 # Запуск автотестов
-pytest api_test/
+pytest api_tests/
