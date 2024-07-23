@@ -51,7 +51,7 @@ def delete_user(user_id: int):
     return {"data": deleted_user} 
 
 
-@app.post("/api/users/")
+@app.post("/api/users")
 def create_user(name: str, email: str, age: int):
     new_id = len(test_data) + 1
     new_user = {"id": new_id, "name": name, "email": email, "age": age, "archive": False}
