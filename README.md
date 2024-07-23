@@ -1,7 +1,11 @@
 # qaguru_python_advanced_intro
 # Микросервис Python + FastAPI
-Установка зависимостей:
-- pip install fastapi uvicorn
+
+Установка:
+- python3 -m venv venv
+- source venv/bin/activate
+- pip install -r requirements
+
 
 Запуск сервера:
 - uvicorn server:app --reload
