@@ -41,7 +41,7 @@ def test_update_user_name_by_id_and_assert_new_name(app_url, user_id):
 	response = requests.put(f"{app_url}/api/users/{user_id}?new_name={new_name}", headers=headers)
 	assert response.status_code == HTTPStatus.OK
 	result = json.loads(response.text)
-	assert str(result['data']['name']) == new_name
+	assert result['data']['name'] == new_name
 
 
 @pytest.mark.parametrize("user_id", [1, 2])
