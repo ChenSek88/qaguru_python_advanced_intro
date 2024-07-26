@@ -28,4 +28,4 @@
 
 Запуск автотестов:
 
-pytest api_tests/
+pytest tests/

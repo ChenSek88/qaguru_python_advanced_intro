@@ -1,5 +1,4 @@
 import json
-#from .apiclient import test_api
 from http import HTTPStatus
 import pytest
 from faker import Faker
@@ -12,9 +11,8 @@ headers = {"accept": "application/json"}
 
 
 @pytest.mark.parametrize("user_id", [1, 2, 3, 4])
-def test_get_user_by_id_and_validate_user_model(app_url, user_id):
+def test_get_user_by_id_assert_and_validate_user_model(app_url, user_id):
 	response = requests.get(f"{app_url}/api/users/{user_id}", headers=headers)
-	#response = test_api().get(f"users/{user_id}", headers=headers)
 	assert response.status_code == HTTPStatus.OK
 	user = json.loads(response.text)
 	assert user['id'] == user_id
@@ -37,9 +35,8 @@ def test_create_user_and_validate_user_model(app_url):
 	User.model_validate(user)
 
 
-#for example update user name
 @pytest.mark.parametrize("user_id", [1, 2])
-def test_update_name_user_by_id_and_assert_new_name(app_url, user_id):
+def test_update_user_name_by_id_and_assert_new_name(app_url, user_id):
 	new_name = fake.name()
 	response = requests.put(f"{app_url}/api/users/{user_id}?new_name={new_name}", headers=headers)
 	assert response.status_code == HTTPStatus.OK
@@ -48,7 +45,7 @@ def test_update_name_user_by_id_and_assert_new_name(app_url, user_id):
 
 
 @pytest.mark.parametrize("user_id", [1, 2])
-def test_delete_non_archived_user_by_id(app_url, user_id):
+def test_delete_non_archived_user_by_id_and_assert_id(app_url, user_id):
 	response = requests.delete(f"{app_url}/api/users/{user_id}",  headers=headers)
 	assert response.status_code == HTTPStatus.OK
 	result = json.loads(response.text)
