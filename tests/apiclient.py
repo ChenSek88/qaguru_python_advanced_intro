@@ -1,4 +1,3 @@
-# vim: ts=4 sw=4 noet
 import requests
 
 
@@ -26,5 +25,6 @@ class ApiClient:
 		return requests.delete(url=url, headers=headers)
 
 
-def test_api():
-	return ApiClient(base_url="http://localhost:8000/api/")
+@pytest.fixture
+def test_api(app_url):
+	return ApiClient(base_url=f"{app_url}/api/")

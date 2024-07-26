@@ -1,14 +1,15 @@
 from fastapi import FastAPI, HTTPException
+from models.User import User, UserCreate
 
 
 app = FastAPI()
 
 
 test_data = {
-    1: {"id": 1, "name": "Ivan", "email": "ivan@gmail.com", "age": 22, "archive": False},
-    2: {"id": 2, "name": "Alex", "email": "alex@gmail.com", "age": 25, "archive": False},
-    3: {"id": 3, "name": "Bob", "email": "bob@gmail.com", "age": 29, "archive": False},
-    4: {"id": 4, "name": "Alice", "email": "alice@gmail.com", "age": 20, "archive": False}
+    1: {"id": 1, "name": "Ivan", "email": "ivan@gmail.com", "archive": False},
+    2: {"id": 2, "name": "Alex", "email": "alex@gmail.com", "archive": False},
+    3: {"id": 3, "name": "Bob", "email": "bob@gmail.com", "archive": False},
+    4: {"id": 4, "name": "Alice", "email": "alice@gmail.com", "archive": False}
 }
 
 
@@ -49,9 +50,9 @@ def delete_user_by_id(user_id: int):
 
 
 @app.post("/api/users")
-def create_user(name: str, email: str, age: int):
+def create_user(user: UserCreate):
     new_id = len(test_data) + 1
-    new_user = {"id": new_id, "name": name, "email": email, "age": age, "archive": False}
+    new_user = {"id": new_id, "name": user.name, "email": user.email, "archive": False}
     test_data[new_id] = new_user
     return {"data": new_user}
 

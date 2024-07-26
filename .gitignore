@@ -1,5 +1,6 @@
 *.pyc
 __pycache__
-test.sh
+test.py
 .pytest_cache
 venv/
+.env
