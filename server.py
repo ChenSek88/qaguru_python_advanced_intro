@@ -2,7 +2,6 @@ from fastapi import FastAPI, HTTPException
 from models.User import User, UserCreate
 from models.AppStatus import AppStatus
 from http import HTTPStatus
-import logging
 import json
 from fastapi_pagination import Page, add_pagination, paginate
 
@@ -68,7 +67,6 @@ def create_user(user: UserCreate):
         "avatar": user.avatar,
         "archive": False
         }
-    logging.debug(users)
     users.append(new_user)
     return {"data": new_user}
 
