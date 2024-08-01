@@ -2,3 +2,5 @@ fastapi==0.111.1
 requests==2.32.3
 uvicorn==0.30.3
 fastapi-pagination
+faker
+pydantic
