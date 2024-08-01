@@ -4,4 +4,4 @@ test.py
 .pytest_cache
 venv/
 .env
-.idea
+.idea*
