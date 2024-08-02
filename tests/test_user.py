@@ -1,58 +1,59 @@
-
-import json
 from http import HTTPStatus
-import pytest
+import json
 from faker import Faker
-from app.models.User import User
+from app.models.User import User, UserUpdate
 import requests
 from random import randint
+import pytest
 
 
 fake = Faker()
-headers = {"accept": "application/json"}
 
 
-@pytest.mark.parametrize("user_id", [1, 2, 3, 4])
-def test_get_user_by_id_assert_and_validate_user_model(app_url, user_id):
-	response = requests.get(f"{app_url}/api/users/{user_id}", headers=headers)
-	assert response.status_code == HTTPStatus.OK
-	user = json.loads(response.text)
-	assert user['id'] == user_id
-	User.model_validate(user)
-
-
-def test_get_nonarchived_users_and_validate_user_model(app_url):
-	response = requests.get(f"{app_url}/api/users", headers=headers)
-	assert response.status_code == HTTPStatus.OK
-	#users = response.json()
-	#for user in users['items']:
-	#	User.model_validate(user)
+def create_user(app_url):
+	new_user = {
+		"first_name": fake.first_name(),
+		"last_name": fake.last_name(),
+		"avatar": f"https://reqres.in/img/faces/{randint(1, 100)}-image.jpg",
+		"email": fake.free_email()}
+	response = requests.post(f"{app_url}/api/users", data=json.dumps(new_user))
+	assert response.status_code == HTTPStatus.CREATED
+	return response
 
 
 def test_create_user_and_validate_user_model(app_url):
-	new_user = {
-		"first_name": fake.first_name(), 
-		"last_name": fake.last_name(), 
-		"avatar": f"https://reqres.in/img/faces/{randint(1,100)}-image.jpg", 
-		"email": fake.free_email()}
-	response = requests.post(f"{app_url}/api/users", data = json.dumps(new_user))
+	user = create_user(app_url)
+	assert user.status_code == HTTPStatus.CREATED
+	User.model_validate(user.json())
+
+
+def test_update_user_avatar_by_id_and_assert_new_avatar(app_url):
+	new_avatar = f"https://reqres.in/img/faces/{randint(1, 100)}-image.jpg"
+	user_id = create_user(app_url).json()['id']
+	response = requests.patch(f"{app_url}/api/users/{user_id}", data = json.dumps({"avatar": new_avatar}))
 	assert response.status_code == HTTPStatus.OK
-	user = json.loads(response.text)['data']
-	User.model_validate(user)
+	user = json.loads(response.text)
+	UserUpdate.model_validate(user)
+	assert user['avatar'] == new_avatar
 
 
-@pytest.mark.parametrize("user_id", [1, 2])
-def test_update_user_name_by_id_and_assert_new_name(app_url, user_id):
-	new_name = fake.first_name()
-	response = requests.put(f"{app_url}/api/users/{user_id}?new_name={new_name}", headers=headers)
+def test_delete_user_by_id_and_get_user_not_found(app_url):
+	user_id = create_user(app_url).json()['id']
+	response = requests.delete(f"{app_url}/api/users/{user_id}")
 	assert response.status_code == HTTPStatus.OK
-	result = json.loads(response.text)
-	assert result['data']['first_name'] == new_name
+	response = requests.get(f"{app_url}/api/users/{user_id}")
+	response.status_code == HTTPStatus.NOT_FOUND
 
 
-@pytest.mark.parametrize("user_id", [1])
-def test_delete_non_archived_user_by_id_and_assert_id(app_url, user_id):
-	response = requests.delete(f"{app_url}/api/users/{user_id}",  headers=headers)
-	assert response.status_code == HTTPStatus.OK
-	result = json.loads(response.text)
-	assert result['data']['id'] == user_id
+@pytest.mark.usefixtures("fill_test_data")
+def test_get_users(app_url):
+    response = requests.get(f"{app_url}/api/users")
+    assert response.status_code == HTTPStatus.OK
+
+    user_list = response.json()
+    for user in user_list:
+        print(user)
+        User.model_validate(user)
+
+
+

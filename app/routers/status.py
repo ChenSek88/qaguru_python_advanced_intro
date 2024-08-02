@@ -3,7 +3,7 @@ from http import HTTPStatus
 from fastapi import APIRouter
 
 from app.models.AppStatus import AppStatus
-#from app.database. import users_db
+from app.database.engine import check_availability
 
 
 router = APIRouter()
@@ -11,9 +11,4 @@ router = APIRouter()
 
 @router.get("/status", status_code=HTTPStatus.OK)
 def status() -> AppStatus:
-    return AppStatus(users=bool(True))
-
-
-@router.get("/")
-def root():
-    return {"message": "FastAPI microservice"}
+    return AppStatus(database=check_availability())
