@@ -16,6 +16,7 @@ class UserCreate(BaseModel):
     last_name: str
     avatar: str
 
+
 class UserUpdate(SQLModel):
     email: EmailStr | None = None
     first_name: str | None = None
