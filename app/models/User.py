@@ -22,3 +22,11 @@ class UserUpdate(SQLModel):
     first_name: str | None = None
     last_name: str | None = None
     avatar: str | None = None
+
+
+class PaginationResponse(BaseModel):
+    total: int
+    page: int
+    size: int
+    pages: int
+    items: list[User]

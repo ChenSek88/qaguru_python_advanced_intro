@@ -5,8 +5,10 @@ from fastapi import APIRouter, HTTPException
 
 from app.database import users
 from app.models.User import User, UserCreate, UserUpdate
+from fastapi_pagination import Page, add_pagination
 
 router = APIRouter(prefix="/api/users")
+add_pagination(router)
 
 
 @router.get("/{user_id}", status_code=HTTPStatus.OK)
@@ -21,7 +23,7 @@ def get_user(user_id: int) -> User:
 
 
 @router.get("", status_code=HTTPStatus.OK)
-def get_users() -> Iterable[User]:
+def get_users() -> Page[User]:
     return users.get_users()
 
 

@@ -4,7 +4,8 @@ from typing import Iterable, Type
 from sqlmodel import Session, select
 from app.database.engine import engine
 from app.models.User import User
-
+from fastapi_pagination.ext.sqlmodel import paginate
+from fastapi_pagination import Page
 
 
 def get_user(user_id: int) -> User | None:
@@ -12,10 +13,10 @@ def get_user(user_id: int) -> User | None:
         return session.get(User, user_id)
 
 
-def get_users() -> Iterable[User]:
+def get_users() -> Page[User]:
     with Session(engine) as session:
         statement = select(User)
-        return session.exec(statement).all()
+        return paginate(session, statement)
 
 
 def create_user(user: User) -> User:

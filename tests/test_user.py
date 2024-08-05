@@ -36,10 +36,10 @@ def test_delete_user(app_url, create_user):
 
 @pytest.mark.usefixtures("fill_test_data")
 def test_get_users(app_url):
-    response = requests.get(f"{app_url}/api/users")
-    assert response.status_code == HTTPStatus.OK
+	response = requests.get(f"{app_url}/api/users")
+	assert response.status_code == HTTPStatus.OK
 
-    user_list = response.json()
-    for user in user_list:
-        print(user)
-        User.model_validate(user)
+	user_list = response.json()['items']
+
+	for user in user_list:
+		User.model_validate(user)
