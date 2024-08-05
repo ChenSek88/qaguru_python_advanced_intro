@@ -6,8 +6,8 @@ import pytest
 from random import randint
 
 
-def test_create_user(app_url, create_user):
-	user = create_user
+def test_create_user(app_url, user_data):
+	user = requests.post(f"{app_url}/api/users", data=json.dumps(user_data))
 	assert user.status_code == HTTPStatus.CREATED
 	User.model_validate(user.json())
 	created_user = requests.get(f"{app_url}/api/users/{user.json()['id']}")

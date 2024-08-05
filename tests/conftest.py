@@ -21,14 +21,18 @@ def app_url():
 	return os.getenv("APP_URL")
 
 
-@pytest.fixture()
-def create_user(app_url):
-    new_user = {
+@pytest.fixture
+def user_data():
+    return {
         "first_name": fake.first_name(),
         "last_name": fake.last_name(),
         "avatar": f"https://reqres.in/img/faces/{randint(1, 100)}-image.jpg",
         "email": fake.free_email()}
-    user = requests.post(f"{app_url}/api/users", data=json.dumps(new_user))
+
+
+@pytest.fixture()
+def create_user(app_url, user_data):
+    user = requests.post(f"{app_url}/api/users", data=json.dumps(user_data))
     assert user.status_code == HTTPStatus.CREATED
     return user
 
