@@ -22,7 +22,7 @@ jobs:
       - run: sleep 5
       - run: pytest tests --junit-xml=test-results.xml
         env:
-          APP_URL: http://127.0.0.1:8002
+          APP_URL: http://127.0.0.1:8000
 
       - run: docker compose logs app
         if: always()
