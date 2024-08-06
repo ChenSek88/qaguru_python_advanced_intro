@@ -1,7 +1,8 @@
 on:
-  pull_request:
+  push:
     branches:
       - main
+
 jobs:
   tests:
     name: Test app
@@ -35,3 +36,16 @@ jobs:
           display-options: fEX
           fail-on-empty: true
           title: Test results
+
+  release:
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - uses: actions/checkout@v4
+      - run: gh release create $(git rev-parse --short HEAD) --generate-notes
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - run: echo "Deploying..."

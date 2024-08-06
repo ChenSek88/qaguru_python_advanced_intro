@@ -8,3 +8,4 @@ sqlmodel
 python-dotenv
 fastapi-pagination
 faker
+pytest
