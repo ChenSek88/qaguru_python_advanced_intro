@@ -1,0 +1,55 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tests:
+    name: Test app
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER: ci
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      - run: pip install --upgrade -r requirements.txt
+      - run: docker compose build
+      - run: docker compose up -d
+      - run: sleep 5
+      - run: pytest tests --junit-xml=test-results.xml
+        env:
+          APP_URL: http://127.0.0.1:8002
+
+      - run: docker compose logs app
+        if: always()
+
+      - name: Surface failing tests
+        if: always()
+        uses: pmeier/pytest-results-action@main
+        with:
+          path: test-results.xml
+          summary: true
+          display-options: fEX
+          fail-on-empty: true
+          title: Test results
+
+  release:
+    runs-on: ubuntu-latest
+    needs: tests
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - run: gh release create $(git rev-parse --short HEAD) --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - run: echo "Deploying..."
